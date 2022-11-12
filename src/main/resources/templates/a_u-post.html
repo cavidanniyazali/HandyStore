@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <script
+            crossorigin="anonymous"
+            src="https://kit.fontawesome.com/38cd4014df.js"
+    ></script>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="icon" th:href="@{/img/logo/ico2.ico}">
+    <title th:if="${post.getId()} !=0 " th:text="${post.getName()} + ' | Update'"></title>
+    <title th:if="${post.getId()} ==0" th:text="'New post'"></title>
+</head>
+<body>
+
+<div class="container-fluid col-12 mt-1 text-center main-container">
+    <div class="e-nav-container">
+        <ul class="col-12 e-nav-list">
+            <li class="col-lg-2 col-md-12 col-sm-12 e-nav-item">
+                <a class="nav-link e-nav-link" href="/dashboard/1"><i class="fas fa-columns mr-2"></i>Dashboard</a>
+            </li>
+            <li class="col-lg-3 col-md-12 col-sm-12 e-nav-item">
+                <div class="dropdown">
+                    <button aria-expanded="false" aria-haspopup="true" class="btn dropdown-toggle e-main-dropdown"
+                            data-toggle="dropdown" id="dropdownMenuButton" type="button">
+                        <i class="fas fa-clipboard mr-2"></i>Posts
+                    </button>
+                    <div aria-labelledby="dropdownMenuButton" class="dropdown-menu e-dd-content">
+                        <a class="dropdown-item" href="/myposts/1"><i class="fas fa-edit mr-2"></i>Manage your posts</a>
+                        <a class="dropdown-item" href="/wishlist"><i class="fas fa-heart mr-2"></i>View your
+                            wishlist</a>
+                    </div>
+                </div>
+            </li>
+            <li class="col-lg-3 col-md-12 col-sm-12 e-nav-item">
+                <a class="nav-link e-nav-link" href="/message"><i class="fas fa-envelope mr-2"></i>Messages</a>
+            </li>
+            <li class="col-lg-2 col-md-12 col-sm-12 e-nav-item">
+                <a class="nav-link e-nav-link" href="/logout"><i class="fas fa-sign-out-alt mr-2"></i>Log out</a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-12 e-posting-container">
+        <div class="e-posting-content">
+            <div class="e-posting-img">
+                <img src="../static/img/logo/123.jpg" width="300" height="150" alt="">
+            </div>
+            <div class="e-posting-info">
+                <form class="col-lg-12 col-md-6 col-sm-12 form-group d-inline-block e-form"
+                      enctype="multipart/form-data"
+                      th:if="${post.getId()==0}" th:action="@{/mypost/addPost}" then method="post">
+
+
+                    <input class="col-12 form-control-lg e-input" name="name" placeholder="Enter product name"
+                           required
+                           type="text">
+                    <select class="col-12 form-control-lg e-input" name="category" required>
+                        <option disabled selected>Select category</option>
+                        <option th:each="cat : ${categories}"
+                                th:text="${cat.name}" th:value="${cat.id}"></option>
+                    </select>
+                    <select class="col-12 form-control-lg e-input" name="city" required>
+                        <option disabled selected>Select your city</option>
+                        <option th:each="city : ${cities}"
+                                th:text="${city.getName()}" th:value="${city.getId()}"></option>
+                    </select>
+                    <input class="col-12 form-control-lg e-input" name="expiryDate" placeholder="Enter expiry date"
+                           required
+
+                           type="date">
+                    <label for="profile-pic" class="form-control-lg form-control text-left e-label">Upload
+                        image </label>
+                    <input required name="image" type="file" class="col-12 form-control-file-lg e-file"
+                           id="profile-pic">
+                    <input class="col-12 form-control e-submit" name="save" type="submit" value="Save">
+                </form>
+                <form class="col-lg-12 col-md-6 col-sm-12 form-group d-inline-block e-form"
+                      enctype="multipart/form-data"
+                      th:if="${post.getId()!=0}" th:action="@{'/mypost/update/' + ${post.getId()}}"
+                      method="post">
+                    <input class="col-12 form-control-lg e-input" name="name" placeholder="Enter product name"
+                           required
+                           type="text">
+                    <select class="col-12 form-control-lg e-input" name="category" required>
+                        <option disabled selected>Select category</option>
+                        <option th:each="cat : ${categories}"
+                                th:text="${cat.getName()}" th:value="${cat.id}"></option>
+                    </select>
+                    <select class="col-12 form-control-lg e-input" name="city" required>
+                        <option disabled selected>Select your city</option>
+                        <option th:each="city : ${cities}"
+                                th:text="${city.getName()}" th:value="${city.getId()}"></option>
+                    </select>
+                    <input class="col-12 form-control-lg e-input" name="expiryDate" placeholder="Enter expiry date"
+                           required
+
+                           type="date">
+                    <label for="profile-pic" class="form-control-lg form-control text-left e-label">Upload
+                        image </label>
+                    <input required name="image" type="file" class="col-12 form-control-file-lg e-file"
+                           id="profile-pic">
+                    <input class="col-12 form-control e-submit" name="save" type="submit" value="Save">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="col-12 mt-3 e-footer-container" id="contact">
+        <section class="col-lg-4 col-md-4 col-sm-12 e-footer-content">
+            <ul class="col-12 e-footer-list">
+                <li class="col-12 my-1 e-footer-item text-left"><a href="/update"><i class="fas fa-user-edit col-2"></i>Manage
+                    your account</a></li>
+                <li class="col-12 my-1 e-footer-item text-left"><a href="/myposts"><i class="fas fa-edit col-2"></i>Manage
+                    your posts</a></li>
+            </ul>
+        </section>
+        <section class="col-lg-4 col-md-4 col-sm-12 e-footer-content">
+            <ul class="col-12 e-footer-list">
+                <li class="col-12 my-1 e-footer-item"><a class="" href="/feedback"><i
+                        class="fas fa-exclamation-triangle col-2"></i>Send feedback</a></li>
+            </ul>
+        </section>
+        <section class="col-lg-4 col-md-4 col-sm-12 e-footer-content">
+            <ul class="col-12 e-footer-list">
+                <li class="col-12 my-1 e-footer-item"><a class="" href="https://www.facebook.com/"><i
+                        class="fab fa-facebook-f col-2"></i>Facebook</a></li>
+                <li class="col-12 my-1 e-footer-item"><a class="" href="https://www.instagram.com/"><i
+                        class="fab fa-instagram col-2"></i>Instagram</a></li>
+                <li class="col-12 my-1 e-footer-item"><a class="" href="https://twitter.com/"><i
+                        class="fab fa-twitter col-2"></i>Twitter</a></li>
+            </ul>
+        </section>
+    </footer>
+    <div class="col-12 mt-3 e-copyright-container alert alert-danger pb-0">
+        <p class="col-12 e-copyright-text">
+            <i class="far fa-copyright mr-2"></i>
+            All rights reserved | You should have permission by author for using any information or data provided by
+            this website. <br>
+            This website is made by Ayshan Rzayeva | Shafa Mammadova | Leman Javadova | Emin Israfilzadeh
+        </p>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

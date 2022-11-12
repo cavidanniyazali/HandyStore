@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <script
+            crossorigin="anonymous"
+            src="https://kit.fontawesome.com/38cd4014df.js"
+    ></script>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="icon" th:href="@{/img/logo/ico2.ico}">
+    <title>Handy | Share with love</title>
+</head>
+<body>
+
+<div class="container-fluid col-12 mt-1 text-center main-container">
+    <div class="d-block col-12 alert alert-success"
+         th:if="${(param.process != null) and (param.process[0] == 'profileupdated')}">
+        Profile updated successfully!
+    </div>
+    <div class="d-block col-12 alert alert-success"
+         th:if="${(param.process != null) and (param.process[0] == 'blocking')}">
+        User is blocked successfully! They will not be able to visit your profile or send message anymore!
+    </div>
+    <div class="d-block col-12 alert alert-success"
+         th:if="${(param.process != null) and (param.process[0] == 'feedback')}">
+        Thank you for sending feedback. We really appreciate all of our users opinion :).
+    </div>
+    <div class="d-block col-12 alert alert-danger" th:if="${(param.error != null) and (param.error[0] == 'blocked')}">
+        This user has blocked you. You can not visit their profile or can not send message :(
+    </div>
+
+    <div class="e-nav-container">
+        <ul class="col-12 e-nav-list">
+            <li class="col-lg-4 col-md-12 col-sm-12 e-nav-item"
+                th:if="${#strings.contains(#httpServletRequest.requestURI, 'dashboard')}">
+                <a class="nav-link  text-left e-nav-link d-flex text-center d-flex justify-content-center"
+                   href="/update">
+                    <img alt="profile picture" class="e-profile-img" height="50" src="img/logo/123.jpg"
+                         th:src="@{${loggedUser.getUserInfo().getProfilePhoto()}}" width="50">
+                    <p class="ml-2 e-par"
+                       th:text="${loggedUser.getUserInfo().getName()}+' '+${loggedUser.getUserInfo().getSurname()}">Emin
+                        Israfilzadeh</p>
+                </a>
+            </li>
+            <li class="col-lg-4 col-md-12 col-sm-12 e-nav-item"
+                th:unless="${#strings.contains(#httpServletRequest.requestURI, 'dashboard')}">
+                <a class="nav-link  text-left e-nav-link d-flex text-center d-flex justify-content-center"
+                   href="/dashboard">
+                    Dashboard
+                </a>
+            </li>
+
+
+            <li class="col-lg-3 col-md-12 col-sm-12 e-nav-item">
+                <div class="dropdown">
+                    <button aria-expanded="false" aria-haspopup="true" class="btn dropdown-toggle e-main-dropdown"
+                            data-toggle="dropdown" id="dropdownMenuButton" type="button">
+                        <i class="fas fa-clipboard mr-2"></i>Posts
+                    </button>
+                    <div aria-labelledby="dropdownMenuButton" class="dropdown-menu e-dd-content">
+                        <a class="dropdown-item" href="/myposts/1"><i class="fas fa-edit mr-2"></i>Manage your posts</a>
+                        <a class="dropdown-item" href="/wishlist"><i class="fas fa-heart mr-2"></i>View your
+                            wishlist</a>
+                    </div>
+                </div>
+            </li>
+            <li class="col-lg-3 col-md-12 col-sm-12 e-nav-item">
+                <a class="nav-link e-nav-link" href="/message"><i class="fas fa-envelope mr-2"></i>Messages</a>
+            </li>
+            <li class="col-lg-2 col-md-12 col-sm-12 e-nav-item">
+                <a class="nav-link e-nav-link" href="/logout"><i class="fas fa-sign-out-alt mr-2"></i>Sign out</a>
+            </li>
+        </ul>
+    </div>
+    <div class="e-search-container">
+        <form class="e-form" method="post">
+            <ul class="col-12 e-search-list">
+                <li class="col-lg-4 col-md-4 col-sm-12 e-search-item">
+                    <input class="form-control e-input" name="keyword" placeholder="Enter your keyword" required
+                           type="search">
+                </li>
+                <li class="col-lg-4 col-md-4 col-sm-12 e-search-item">
+                    <label class="col-2" for="category-sel">in</label>
+                    <select class="custom-select col-lg-9 col-md-9 col-sm-12 e-input" id="category-sel" name="category"
+                            required>
+                        <option disabled selected value="0">Select category</option>
+                        <option th:each="cat : ${categories}" th:text="${cat.name}" th:value="${cat.id}"></option>
+                    </select>
+                </li>
+                <li class="col-lg-4 col-md-4 col-sm-12 e-search-item">
+                    <input class="col-12 btn e-submit" name="search" type="submit" value="Search">
+                </li>
+
+            </ul>
+        </form>
+    </div>
+    <div class="d-block col-12 alert alert-danger"
+         th:if="${(param.error != null) and (param.error[0] == 'postnotfound')}">
+        No post found according to your input
+    </div>
+    <article class="e-post-container">
+
+        <section class="col-lg-3 col-md-4 col-sm-12 p-0 e-post-content" th:each="post : ${posts}"
+                 th:if="${(posts.size()!=0) or posts.size() != 1}">
+
+            <div class="position-relative e-post-top">
+                <div class="position-absolute e-post-datetime">
+                    <p class="col-12 m-0 font-weight-bold e-post-date" th:text="${post.expiryDate}">20.10.2020</p>
+                </div>
+                <div class="e-post-img">
+                    <img alt="post" src="img/logo/123.jpg" style="height: 250px; object-fit: contain"
+                         th:src="${post.imageUrl}">
+                </div>
+            </div>
+            <div class="e-post-bottom">
+                <div class="e-post-info">
+                    <div class="e-post-data">
+                        <p class="col-12 mb-1 text-center" style="color: white" th:text="${post.name}">Boy</p>
+                        <i class="fas fa-user col-2"></i>
+                        <a th:href="'/user/'+${post.user.getId()}"
+                           th:text="${post.user.getUserInfo().getName()} + ' ' + ${post.user.getUserInfo().getSurname()}"
+                           class="card-link">Emin
+                            Israfilzadeh</a>
+                    </div>
+                    <div class="e-post-data">
+                        <i class="fas fa-city col-2"></i>
+                        <p class="d-inline-block" th:text="${post.city} ">Baku</p>
+                    </div>
+                    <div class="e-post-data">
+                        <i class="far fa-calendar-alt col-2"></i>
+                        <p class="d-inline-block" th:text="${post.expiryDate}">23.07.2020</p>
+                    </div>
+                </div>
+                <div class="e-post-contact">
+                    <i class="fas fa-envelope col-2"></i>
+                    <a class="card-link e-post-data" th:href="'/message/'+${post.getUser().getId()}">Send message</a>
+                </div>
+                <div class="e-post-wishlist">
+                    <i class="fas fa-heart col-2"></i>
+                    <a class="card-link e-post-data" th:href="'/wishlist/delete/' + ${post.id}"
+                       th:if="${(wished!=null) and (wished==true)}" th:text="'Remove from wishlist'">Add to wishlist</a>
+                    <a class="card-link e-post-data" th:href="'/wishlist/add/' + ${post.id}" th:if="${(wished==null)}"
+                       th:text="'Add to wishlist'"></a>
+                </div>
+            </div>
+        </section>
+    </article>
+    <div class="col-12 mt-3 e-pagination-container"
+         th:if="${#strings.contains(#httpServletRequest.requestURI, 'dashboard')}">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination pagination-lg justify-content-center">
+
+                <li class="page-item">
+                    <a aria-disabled="true" class="page-link" tabindex="-1"
+                       th:href="@{'/dashboard/'+${currentPage-1}}"
+                       th:if="${currentPage>1}">Previous</a>
+                </li>
+
+                 <li class="page-item" th:each="i: ${#numbers.sequence(1,totalPages)}">
+                     <a class="page-link" th:href="@{'/dashboard/' + ${i}}"
+                        th:if="${i!=currentPage}">[[${i}]]</a>
+                     <span class="page-link" th:unless="${i!=currentPage}">[[${i}]]</span>
+                 </li>
+
+                <li class="page-item">
+                    <a class="page-link"
+                       th:href="@{'/dashboard/'+${currentPage+1}}"
+                       th:if="${currentPage<totalPages}">Next</a>
+                    <span class="page-link" th:unless="${currentPage<totalPages}">Next</span>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="col-12 e-ad-container">
+
+    </div>
+
+    <footer class="col-12 mt-3 e-footer-container" id="contact">
+        <section class="col-lg-4 col-md-4 col-sm-12 e-footer-content">
+            <ul class="col-12 e-footer-list">
+                <li class="col-12 my-1 e-footer-item text-left"><a href="/update"><i class="fas fa-user-edit col-2"></i>Manage
+                    your account</a></li>
+                <li class="col-12 my-1 e-footer-item text-left"><a href="/myposts/1"><i class="fas fa-edit col-2"></i>Manage
+                    your posts</a></li>
+            </ul>
+        </section>
+        <section class="col-lg-4 col-md-4 col-sm-12 e-footer-content">
+            <ul class="col-12 e-footer-list">
+                <li class="col-12 my-1 e-footer-item"><a class="" href="/feedback"><i
+                        class="fas fa-exclamation-triangle col-2"></i>Send feedback</a></li>
+            </ul>
+        </section>
+        <section class="col-lg-4 col-md-4 col-sm-12 e-footer-content">
+            <ul class="col-12 e-footer-list">
+                <li class="col-12 my-1 e-footer-item"><a class="" href="https://www.facebook.com/"><i
+                        class="fab fa-facebook-f col-2"></i>Facebook</a></li>
+                <li class="col-12 my-1 e-footer-item"><a class="" href="https://www.instagram.com/"><i
+                        class="fab fa-instagram col-2"></i>Instagram</a></li>
+                <li class="col-12 my-1 e-footer-item"><a class="" href="https://twitter.com/"><i
+                        class="fab fa-twitter col-2"></i>Twitter</a></li>
+            </ul>
+        </section>
+    </footer>
+    <div class="col-12 mt-3 e-copyright-container alert alert-danger pb-0">
+        <p class="col-12 e-copyright-text">
+            <i class="far fa-copyright mr-2"></i>
+            All rights reserved | You should have permission by author for using any information or data provided by
+            this website. <br>
+            This website is made by Ayshan Rzayeva | Shafa Mammadova | Leman Javadova | Emin Israfilzadeh
+        </p>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
